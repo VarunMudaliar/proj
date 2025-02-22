@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .calculator {
+            width: 300px;
+            margin: 100px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .display {
+            height: 50px;
+            font-size: 24px;
+            text-align: right;
+            margin-bottom: 10px;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .buttons button {
+            height: 60px;
+            font-size: 18px;
+        }
+        #add {
+            grid-column: 4 / 5;  /* Stays in the last column */
+            grid-row: 4 / 6;     /* Stretches from row 4 to the bottom */
+            height: 100%;        /* Ensure it stretches fully */
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <input type="text" class="form-control display" />
+        <div class="buttons">
+            <button class="btn btn-danger" data-value="AC">AC</button>
+            <button class="btn btn-light operator" data-value="%">%</button>
+            <button class="btn btn-light operator" data-value="sqr">x²</button>
+            <button class="btn btn-light operator" data-value="/">/</button>
+
+            <button class="btn btn-light" data-value="7">7</button>
+            <button class="btn btn-light" data-value="8">8</button>
+            <button class="btn btn-light" data-value="9">9</button>
+            <button class="btn btn-light operator" data-value="*">*</button>
+
+            <button class="btn btn-light" data-value="4">4</button>
+            <button class="btn btn-light" data-value="5">5</button>
+            <button class="btn btn-light" data-value="6">6</button>
+            <button class="btn btn-light operator" data-value="-">-</button>
+
+            <button class="btn btn-light" data-value="1">1</button>
+            <button class="btn btn-light" data-value="2">2</button>
+            <button class="btn btn-light" data-value="3">3</button>
+            <button id="add" class="btn btn-light operator" data-value="+">+</button>
+
+            <button class="btn btn-light" data-value="0">0</button>
+            <button class="btn btn-light" data-value=".">.</button>
+            <button class="btn btn-success" data-value="=">=</button>
+        </div>
+    </div>
+
+    <script>
+        const display = document.querySelector(".display");
+        const buttons = document.querySelectorAll("button");
+        let output = "";
+
+        // Restrict manual input to valid characters
+        display.addEventListener("input", (e) => {
+            display.value = display.value.replace(/[^0-9+\-*/%.]/g, "");
+            output = display.value;
+        });
+
+        // Enable Enter key to trigger calculation
+        display.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                calculate("=");
+            }
+        });
+
+        // Calculation logic
+        const calculate = (btnValue) => {
+            if (btnValue === "=") {
+                try {
+                    output = eval(output);
+                } catch (error) {
+                    output = "Error";
+                }
+            } else if (btnValue === "AC") {
+                output = "";
+            } else if (btnValue === "sqr") {
+                let lastNumber = output.match(/(\d+\.?\d*)$/);
+                if (lastNumber) {
+                    const squared = Math.pow(parseFloat(lastNumber[0]), 2);
+                    output = output.replace(/(\d+\.?\d*)$/, squared);
+                }
+            } else {
+                output += btnValue;
+            }
+            display.value = output;
+        };
+
+        // Attach event listeners to buttons
+        buttons.forEach((button) => {
+            button.addEventListener("click", (e) => calculate(e.target.dataset.value));
+        });
+    </script>
+</body>
+</html>

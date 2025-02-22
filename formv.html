@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Validation</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .container {
+      max-width: 500px;
+      margin-top: 50px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .error {
+      color: red;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 class="text-center">Registration Form</h2>
+    <form id="registrationForm">
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" class="form-control" id="fullName" placeholder="Enter full name">
+        <small class="error" id="nameError"></small>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" class="form-control" id="email" placeholder="Enter email">
+        <small class="error" id="emailError"></small>
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="text" class="form-control" id="phone" placeholder="Enter phone number">
+        <small class="error" id="phoneError"></small>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" placeholder="Enter password">
+        <small class="error" id="passwordError"></small>
+      </div>
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm password">
+        <small class="error" id="confirmPasswordError"></small>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Register</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('registrationForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent form from submitting
+      validateForm();
+    });
+
+    function validateForm() {
+      let isValid = true;
+
+      const fullName = document.getElementById('fullName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      // Clear previous errors
+      clearErrors();
+
+      // Full Name Validation
+      const nameRegex = /^[A-Za-z ]+$/;
+      if (fullName.length < 5 || !nameRegex.test(fullName)) {
+        showError('nameError', 'Name must be at least 5 characters long and should only contain alphabets');
+        isValid = false;
+      }
+
+      // Email Validation
+      if (!email.includes('@')) {
+        showError('emailError', 'Enter a valid email address');
+        isValid = false;
+      }
+
+      // Phone Number Validation
+      if (phone.length !== 10 || phone === '1234567890' || isNaN(phone)) {
+        showError('phoneError', 'Enter a valid 10-digit phone number');
+        isValid = false;
+      }
+
+      // Password Validation (Must include uppercase, lowercase, number, and special character)
+      const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      if (!strongPasswordRegex.test(password) || password.toLowerCase() === 'password' || password.toLowerCase() === fullName.toLowerCase()) {
+        showError('passwordError', 'Password must be at least 8 characters long, include uppercase, lowercase, number, and special character, and cannot be "password" or your name');
+        isValid = false;
+      }
+
+      // Confirm Password Validation
+      if (password !== confirmPassword) {
+        showError('confirmPasswordError', 'Passwords do not match');
+        isValid = false;
+      }
+
+      // If form is valid
+      if (isValid) {
+        alert('Form submitted successfully!');
+      }
+    }
+
+    function showError(elementId, message) {
+      document.getElementById(elementId).innerText = message;
+    }
+
+    function clearErrors() {
+      const errors = document.querySelectorAll('.error');
+      errors.forEach(error => error.innerText = '');
+    }
+  </script>
+</body>
+</html>
